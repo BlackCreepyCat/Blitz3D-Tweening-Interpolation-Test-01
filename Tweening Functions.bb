@@ -15,22 +15,16 @@ SetBuffer BackBuffer ()
 AppFont=LoadFont("Arial",15,1,0,0) 
 SetFont AppFont
 
-
 ; ----------------------------------
 ; Construction de la scene
 ; ----------------------------------
 MoveMouse GraphicsWidth()/2, GraphicsHeight()/2
-
-
 AmbientLight 100,100,100
 
-
-
-
-; Créer un cube
+; CrÃ©er un cube
 Global cube = CreateCube()
 
-; Position de départ et d'arrivée
+; Position de dÃ©part et d'arrivÃ©e
 Global startX# = -10
 Global startY# = 0
 Global startZ# = 0
@@ -41,18 +35,17 @@ Global endZ# = 0
 Global Camera = CreateCamera()
 PositionEntity Camera, 0, 0, -15
 
-; Temps de déplacement
-Global moveTime# = 8.0  ; Temps total pour le déplacement (en secondes)
+; Temps de dÃ©placement
+Global moveTime# = 8.0  ; Temps total pour le dÃ©placement (en secondes)
 Global startTime# = MilliSecs()
 
-; Définir l'état initial de l'animation (vers la destination ou inverse)
+; DÃ©finir l'Ã©tat initial de l'animation (vers la destination ou inverse)
 Global isForward% = 1
-Global t# = 0.0  ; Initialisation du facteur t# à 0
+Global t# = 0.0  ; Initialisation du facteur t# Ã  0
 
 
-; Calculer le temps écoulé en secondes depuis le début de l'animation
+; Calculer le temps Ã©coulÃ© en secondes depuis le dÃ©but de l'animation
 Global elapsedTime# = (MilliSecs() - startTime#) / 1000.0  ; Conversion en secondes
-
 
 ; -----------------------------------------------
 ;	Boucle principale du programme
@@ -96,23 +89,22 @@ Repeat
 	Flip
 Until KeyHit (1)
 
-
 Function CalculateT#(AnimTime#, PinPong% = False)
-    elapsedTime# = (MilliSecs() - startTime#) / 1000.0  ; Temps écoulé en secondes
+    elapsedTime# = (MilliSecs() - startTime#) / 1000.0  ; Temps Ã©coulÃ© en secondes
     totalCycle# = AnimTime# * 2  ; Cycle complet aller-retour
     
-    ; Calcul de t# pour l'animation, bouclage après chaque cycle complet
-    t# = (elapsedTime# Mod totalCycle#) / AnimTime#  ; De 0 à 1 pendant un aller complet
+    ; Calcul de t# pour l'animation, bouclage aprÃ¨s chaque cycle complet
+    t# = (elapsedTime# Mod totalCycle#) / AnimTime#  ; De 0 Ã  1 pendant un aller complet
     
     If PinPong% = True Then
-        ; Inverser la direction après avoir atteint 1.0
+        ; Inverser la direction aprÃ¨s avoir atteint 1.0
         If t# > 1.0 Then
             t# = 2.0 - t#  ; Inversion pour le retour
         EndIf
     Else
         ; Pour PinPong = False, on boucle directement
         If t# > 1.0 Then
-            t# = 1.0  ; Ne jamais dépasser 1.0
+            t# = 1.0  ; Ne jamais dÃ©passer 1.0
         EndIf
     EndIf
     
@@ -120,7 +112,7 @@ Function CalculateT#(AnimTime#, PinPong% = False)
 End Function
 
 Function UpdateGame ()
-    ; Calculer le facteur t# basé sur le temps écoulé et le temps de déplacement
+    ; Calculer le facteur t# basÃ© sur le temps Ã©coulÃ© et le temps de dÃ©placement
     t# = CalculateT#(moveTime#, True)  ; True pour PingPong
     
 ;    ; Calculer les positions du cube avec l'interpolation
@@ -158,25 +150,23 @@ Function UpdateGame ()
 	
 	
     
-    ; Déplacer le cube
+    ; DÃ©placer le cube
     PositionEntity cube, currentX#, currentY#, currentZ#    
 End Function
 
 ; ---------------------------------------------------------------------
-; Linear : Représente une interpolation linéaire, où le mouvement entre
-; deux valeurs est constant sur toute la durée de l'animation.
+; Linear : ReprÃ©sente une interpolation linÃ©aire, oÃ¹ le mouvement entre
+; deux valeurs est constant sur toute la durÃ©e de l'animation.
 ; ---------------------------------------------------------------------
 Function Tween_Linear#(t#, b#, c#, d#)
     Return c# * t# / d# + b#
 End Function
-
 ; ---------------------------------------------------------------------------
-; InQuad : Est une courbe qui commence lentement et accélère progressivement.
+; InQuad : Est une courbe qui commence lentement et accÃ©lÃ¨re progressivement.
 ; ---------------------------------------------------------------------------
 Function Tween_InQuad#(t#, b#, c#, d#)
     Return c# * (t# / d#) ^ 2 + b#
 End Function
-
 ; -----------------------------------------------------------------------------------------
 ; OutQuad : Est une courbe qui commence rapidement et ralentit progressivement vers la fin.
 ; -----------------------------------------------------------------------------------------
@@ -184,9 +174,8 @@ Function Tween_OutQuad#(t#, b#, c#, d#)
     t# = t# / d#
     Return -c# * t# * (t# - 2) + b#
 End Function
-
 ; --------------------------------------------------------
-; InOutQuad : Lent au début et à la fin, rapide au milieu.
+; InOutQuad : Lent au dÃ©but et Ã  la fin, rapide au milieu.
 ; --------------------------------------------------------
 Function Tween_InOutQuad#(t#, b#, c#, d#)
     t# = t# / d# * 2
@@ -195,9 +184,8 @@ Function Tween_InOutQuad#(t#, b#, c#, d#)
     End If
     Return -c# / 2 * ((t# - 1) * (t# - 3) - 1) + b#
 End Function
-
 ; --------------------------------------------------------
-; OutInQuad : Rapide au début et à la fin, lent au milieu.
+; OutInQuad : Rapide au dÃ©but et Ã  la fin, lent au milieu.
 ; --------------------------------------------------------
 Function Tween_OutInQuad#(t#, b#, c#, d#)
     If t# < d# / 2 Then
@@ -205,26 +193,23 @@ Function Tween_OutInQuad#(t#, b#, c#, d#)
     End If
     Return Tween_InQuad#((t# * 2) - d#, b# + c# / 2, c# / 2, d#)
 End Function
-
 ; -------------------------------------------------------------------------------
-; InCubic : Est une courbe qui commence très lentement, puis accélère rapidement, 
-; avec un changement de vitesse plus prononcé que dans les courbes quadratiques.
+; InCubic : Est une courbe qui commence trÃ¨s lentement, puis accÃ©lÃ¨re rapidement, 
+; avec un changement de vitesse plus prononcÃ© que dans les courbes quadratiques.
 ; -------------------------------------------------------------------------------
 Function Tween_InCubic#(t#, b#, c#, d#)
     Return c# * (t# / d#) ^ 3 + b#
 End Function
-
 ; ---------------------------------------------------------------------------
-; OutCubic : Commence rapidement et ralentit progressivement à la fin. 
-; OutCubic démarre avec une vitesse élevée puis se stabilise progressivement.
+; OutCubic : Commence rapidement et ralentit progressivement Ã  la fin. 
+; OutCubic dÃ©marre avec une vitesse Ã©levÃ©e puis se stabilise progressivement.
 ; ---------------------------------------------------------------------------
 Function Tween_OutCubic#(t#, b#, c#, d#)
     Return c# * ((t# / d# - 1) ^ 3 + 1) + b#
 End Function
-
 ; ---------------------------------------------------------------------------------
 ; InOutCubic : Combine les comportements des fonctions InCubic et OutCubic.
-; Elle commence lentement, accélère au milieu, puis ralentit à nouveau vers la fin.
+; Elle commence lentement, accÃ©lÃ¨re au milieu, puis ralentit Ã  nouveau vers la fin.
 ; ---------------------------------------------------------------------------------
 Function Tween_InOutCubic#(t#, b#, c#, d#)
     t# = t# / d# * 2
@@ -234,10 +219,9 @@ Function Tween_InOutCubic#(t#, b#, c#, d#)
     t# = t# - 2
     Return c# / 2 * (t# * t# * t# + 2) + b#
 End Function
-
 ; ---------------------------------------------------------------------------------------------------------
-; OutInCubic : Combine les comportements des fonctions OutCubic et InCubic, mais dans un ordre inversé :
-; elle commence par une animation qui ralentit (sortie) et puis accélère (entrée) après le milieu du cycle.
+; OutInCubic : Combine les comportements des fonctions OutCubic et InCubic, mais dans un ordre inversÃ© :
+; elle commence par une animation qui ralentit (sortie) et puis accÃ©lÃ¨re (entrÃ©e) aprÃ¨s le milieu du cycle.
 ; ---------------------------------------------------------------------------------------------------------
 Function Tween_OutInCubic#(t#, b#, c#, d#)
     If t# < d# / 2 Then
@@ -245,11 +229,3 @@ Function Tween_OutInCubic#(t#, b#, c#, d#)
     End If
     Return Tween_InCubic#((t# * 2) - d#, b# + c# / 2, c# / 2, d#)
 End Function
-
-
-
-
-
-;~IDEal Editor Parameters:
-;~F#A8#AF#B6#BE#C9#E4#F1
-;~C#Blitz3D
